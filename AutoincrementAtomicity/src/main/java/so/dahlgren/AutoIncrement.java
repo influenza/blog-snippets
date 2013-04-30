@@ -1,4 +1,3 @@
-// Copyright 2012, Buffalo Studios. All rights reserved.
 package so.dahlgren;
 
 import java.util.concurrent.CountDownLatch;
