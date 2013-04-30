@@ -1,4 +1,4 @@
-Autoincrement isn't Automic
+Autoincrement isn't Atomic
 ===========================
 
 This is a small test to demonstrate the the auto-increment operator isn't atomic in java.
