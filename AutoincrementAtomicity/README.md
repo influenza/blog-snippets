@@ -6,7 +6,7 @@ This is a small test to demonstrate the the auto-increment operator isn't atomic
 To verify this on your machine, perform the following:
 ```
 $ gradle jar
-$ java -jar build/lib/AutoincrementAtomicity-1.0.jar 4 1000
+$ java -jar build/libs/AutoincrementAtomicity-1.0.jar 4 1000
 ```
 
 The two command line arguments specify the number of threads (arg 1) and number of iterations
