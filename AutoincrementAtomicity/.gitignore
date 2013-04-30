@@ -1,0 +1,7 @@
+# Vim swap files
+*.swp
+*.swo
+# Build artifacts
+build
+# Gradle housekeeping
+.gradle
