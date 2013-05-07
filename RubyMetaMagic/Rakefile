@@ -1,0 +1,23 @@
+require 'rake/testtask'
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new('all') do |t|
+  t.fail_on_error = false
+end
+
+RSpec::Core::RakeTask.new('round_one') do |t|
+  t.fail_on_error = false
+  t.pattern = 'spec/one*_spec.rb'
+end
+
+RSpec::Core::RakeTask.new('round_two') do |t|
+  t.fail_on_error = false
+  t.pattern = 'spec/two*_spec.rb'
+end
+
+RSpec::Core::RakeTask.new('round_three') do |t|
+  t.fail_on_error = false
+  t.pattern = 'spec/three*_spec.rb'
+end
+desc 'Run ze tests!'
+task :default => :all
