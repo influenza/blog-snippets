@@ -1,15 +1,15 @@
 #!/bin/bash
 #############################################################################
-# This script assumes the following:																				#
-#		- it is being ran as a non-root sudoer 																	#
-#		- aptitude is the package manager being used														#
-#		- apache2 will be used as the web server (and is already installed)			#
-#		- apache2 is controlled via service(8), rather than manual init scripts	#
-#############################################################################
-# WARNING - This script will enable the default graphite site and restart		#
-#		apache2 during its execution. If this is a problem, this script is not	#
-#		for you!																																#
-#############################################################################
+# This script assumes the following:
+#		- it is being ran as a non-root sudoer
+#		- aptitude is the package manager being used
+#		- apache2 will be used as the web server (and is already installed)
+#		- apache2 is controlled via service(8), rather than manual init scripts
+############################################################################
+# WARNING - This script will enable the default graphite site and restart
+#		apache2 during its execution. If this is a problem, this script is not
+#		for you!
+############################################################################
 MAJOR_VERSION="0.9"
 VERSION="0.9.10"
 # Ensure dependencies are met
