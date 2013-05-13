@@ -59,6 +59,7 @@ popd
 
 # Configure Carbon
 pushd /opt/graphite/conf
+echo "Copying example configuration files"
 sudo cp carbon.conf.example carbon.conf
 sudo cp storage-schemas.conf.example storage-schemas.conf
 sudo cp graphite.wsgi.example graphite.wsgi
