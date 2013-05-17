@@ -1,4 +1,4 @@
-==Vote For Me!==
+## Vote For Me! ##
 
 This project provides a simulacrum of the modern politician. Using this module,
 you too can be a successful political figure! 
