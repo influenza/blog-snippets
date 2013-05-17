@@ -1,0 +1,9 @@
+require 'rake/testtask'
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new('all') do |t|
+  t.fail_on_error = false
+end
+
+desc 'Run ze tests!'
+task :default => :all
