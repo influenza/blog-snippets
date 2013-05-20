@@ -1,7 +1,8 @@
 module VoteForMe
   # Instantiate for a new candidate!
   class ArchetypePolitico
-    def init confidence = 1.0, frustration = 0.0
+
+    def initialize confidence = 1.0, frustration = 0.0 
       # Normalized confidence and frustration values
       @confidence = confidence
       @frustration = frustration
@@ -18,34 +19,51 @@ module VoteForMe
     def say_this_too vapidStatement
       @other_statements << vapidStatement
     end
+
+    def question questionBody
+      # Downcase for ease of parsing
+      downcased = questionBody.downcase
+      # Determine if this contains any talking point keywords
+      talkingPointMatches = @talking_points.find_all do |point|
+        point.tags.reduce(false) do |acc, tag| 
+          acc || (not downcased.index(tag).nil?)
+        end
+      end
+      response = [questionBody + " Well..."]
+      response += talkingPointMatches.map do |point| point.body end
+      response
+    end
   end
 
   # The parent of all utterances made by an ArchetypePolitico
   class VapidStatement
     attr_reader :category
     attr_reader :body
-    def init category, body = "umm..." # A perfect default!
+    def initialize category, body = "umm..." # A perfect default!
       @category = category
+      @body = body
     end
   end
 
   # Jobs! Accountability! Change!
   class TalkingPoint < VapidStatement
-    def init body
+    attr_accessor :tags
+    def initialize body, tag, *more
       super :talking_point, body
+      @tags = (more << tag)
     end
   end
 
   # Excited! Optimistic! Confident!
   class OptimisticPlatitude < VapidStatement
-    def init body
+    def initialize body
       super :platitude, body
     end
   end
 
   # Upbringing! Family! Religion!
   class BioBlurb < VapidStatement
-    def init body
+    def initialize body
       super :bio, body
     end
   end
