@@ -1,0 +1,17 @@
+---
+- hosts: vagrant
+  sudo: yes
+  tasks:
+    - name: update apt cache
+      apt: update_cache=yes cache_valid_time=3600
+    - name: install apt packages
+      apt: pkg={{item}} state=latest
+      with_items:
+        - openjdk-7-jdk
+        - unzip
+        - git
+    - name: set java home
+      lineinfile: dest=/home/vagrant/.bashrc regexp="export JAVA_HOME" line="export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/"
+    - name: install the app
+      git: repo=https://github.com/grails-samples/grails-petclinic.git dest=/opt/petclinic/app version=HEAD
+

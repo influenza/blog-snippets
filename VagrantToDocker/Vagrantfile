@@ -1,0 +1,36 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "precise64"
+  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+
+  config.vm.network :private_network, ip: "192.168.111.222"
+  config.vm.network "forwarded_port", guest: 8080, host: 8080 # web app
+  config.vm.network "forwarded_port", guest: 5432, host: 5432 # postgresql
+
+  config.vm.provider "virtualbox" do |v|
+    # 8 generous gigabytes of RAM
+    v.memory = 8192
+    # We are running headless
+    v.customize ["modifyvm", :id, "--vram", "10"]
+  end
+
+  # Use ansible as our provisioning tool, because ansible
+  # is pretty awesome
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "Ansible/playbook.yml"
+    ansible.inventory_path = "Ansible/hosts.ini"
+    ansible.limit = "vagrant"
+    ansible.verbose = 'vv'
+  end
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder ".", "/opt/petclinic"
+end
+
