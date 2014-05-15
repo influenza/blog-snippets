@@ -15,5 +15,4 @@ WORKDIR /opt/petclinic/app/
 # Expose the grails web-app port
 EXPOSE 8080
 # Run the application when running the container with no params
-ENTRYPOINT ["/bin/bash", "-c", "/opt/petclinic/app/grailsw"]
-CMD "run-app"
+ENTRYPOINT ["bash", "-c"]
