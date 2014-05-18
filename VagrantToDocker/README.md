@@ -10,3 +10,4 @@ Provided here are the following files:
     - hosts.ini - A host inventory file
     - playbook.yml - Will provision a machine for running a sample grails app
 * Docker/
+  - Dockerfile - Specifies the container we use
