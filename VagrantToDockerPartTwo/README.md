@@ -10,3 +10,5 @@ Provided here are the following files:
     - hosts.ini - A host inventory file
     - playbook.yml - Will provision a machine for running postgres and grails
 * Docker/
+  - Petclinic/ - Contains the Petclinic application Dockerfile
+  - Postgres/ - Contains the PostgreSQL database Dockerfile
