@@ -1,0 +1,52 @@
+---
+- hosts: vagrant
+  sudo: yes
+  handlers:
+    - name: restart pg
+      service: name=postgresql state=restarted
+      sudo: yes
+  tasks:
+    - name: update apt cache
+      apt: update_cache=yes cache_valid_time=3600
+    - name: install apt packages
+      apt: pkg={{item}} state=latest
+      with_items:
+        - openjdk-7-jdk
+        - unzip
+        - git
+        - python-apt
+        - python-pycurl
+        - python-psycopg2
+    - name: set java home
+      lineinfile: dest=/home/vagrant/.bashrc regexp="export JAVA_HOME" line="export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/"
+
+    - name: add the postgresql apt repo
+      apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main' state=present
+
+    - name: install postgresql
+      apt: pkg='postgresql-9.3' state=latest force=yes # Force install as the postgresql pkg can't be authenticated
+
+    - name: look for petclinic db
+      shell: sudo -u postgres psql --command "\l"
+      ignore_errors: True
+      register: db_list
+
+    - name: create petclinic db
+      postgresql_db: name=petclinic
+      sudo_user: postgres
+      when: db_list.stdout.find("petclinic") == -1
+
+    - name: create grails DB user
+      postgresql_user: name='grails' password='super secure' role_attr_flags=SUPERUSER,CREATEDB priv=ALL db=petclinic
+      sudo_user: postgres
+
+    - name: setup hba auth for local users
+      lineinfile: dest=/etc/postgresql/9.3/main/pg_hba.conf
+        regexp='local\s+all\s+all\s+peer'
+        line='local all all md5'
+        insertafter=EOF
+      notify: restart pg
+
+    - name: install the forked version of the app
+      git: repo=https://github.com/influenza/grails-petclinic dest=/opt/petclinic/app version=HEAD
+
