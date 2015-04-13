@@ -1,7 +1,7 @@
 Migrating from Vagrant to Docker
 ================================
 
-This files are to supplement my blog post [of the same name](http://dahlgren.so/software/2014/05/11/From-Vagrant-To-Docker/). 
+These files are to supplement my blog post [of the same name](http://dahlgren.so/software/2014/05/11/From-Vagrant-To-Docker/). 
 Provided here are the following files:
 
 * Vagrant/ - The vagrant version of our test app
