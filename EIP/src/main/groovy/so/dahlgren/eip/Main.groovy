@@ -2,6 +2,7 @@ package so.dahlgren.eip
 
 import com.rabbitmq.client.ConnectionFactory;
 import groovy.transform.CompileStatic // <-- let's make Groovy a safer place
+import so.dahlgren.eip.helloclients.HelloSample
 
 /**
  * Main entry point when running the samples as an application.
@@ -13,6 +14,6 @@ class Main {
             it.setHost("localhost")
             it
         }
-        HelloClients.runHelloSample(cf, "eip-one", 10000)
+        HelloSample.runSample(cf, "eip-one", 10000)
     }
 }

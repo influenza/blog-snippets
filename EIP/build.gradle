@@ -10,6 +10,7 @@ repositories {
 dependencies {
   compile "org.codehaus.groovy:groovy-all:2.3.6"
   compile "com.rabbitmq:amqp-client:3.4.1"
+  compile "org.slf4j:slf4j-api:1.7.12"
 }
 
 jar {
