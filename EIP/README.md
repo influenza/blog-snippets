@@ -6,3 +6,7 @@ Hohpe and Woolf's text, [Enterprise Integration Patterns](http://www.amazon.com/
 
 For additional information, see [the blog](http://dahlgren.so/categories.html#eip-ref).
 
+To run:
+
+  `gradle build && java -jar build/libs/EIP-1.0.jar`
+
