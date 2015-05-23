@@ -1,5 +1,6 @@
 package so.dahlgren.eip
 
+import com.rabbitmq.client.ConnectionFactory;
 import groovy.transform.CompileStatic // <-- let's make Groovy a safer place
 
 /**
@@ -8,6 +9,10 @@ import groovy.transform.CompileStatic // <-- let's make Groovy a safer place
 @CompileStatic
 class Main {
     static void main(String[] args) {
-        println("This jar doesn't do anything yet. We'll add some logic here later.")
+        ConnectionFactory cf = new ConnectionFactory().with {
+            it.setHost("localhost")
+            it
+        }
+        HelloClients.runHelloSample(cf, "eip-one", 10000)
     }
 }
