@@ -14,15 +14,15 @@ import org.slf4j.LoggerFactory
 
 @CompileStatic
 class HelloSample {
-    private final Logger logger = LoggerFactory.getLogger(HelloClients.class)
+    private static final Logger logger = LoggerFactory.getLogger(HelloSample.class)
 
     // Gimme the spread operator!
     @CompileStatic(value=TypeCheckingMode.SKIP)
     static void runSample(ConnectionFactory factory, String queueName, long millisToRun) {
-
         int producers = 3
         int consumers = 2
 
+        logger.info('Sample will include {} producer threads and {} consumer threads', producers, consumers)
         CountDownLatch start = new CountDownLatch(1);
         CountDownLatch stop = new CountDownLatch(producers + consumers);
 
@@ -45,23 +45,35 @@ class HelloSample {
 
         for (int i = 0; i < producers; i++) {
             HelloProducer producer = new HelloProducer(sharedParams +
-                [ out: connection.createChannel().with { it.queueDeclare(*queueDeclarationParams); it } ]
+                [
+                    name: "Producer-${i}",
+                    out: connection.createChannel().with {
+                        it.queueDeclare(*queueDeclarationParams)
+                        it
+                    }
+                ]
             )
             new Thread(producer).start()
         }
 
         for (int i = 0; i < consumers; i++) {
             HelloConsumer consumer = new HelloConsumer(sharedParams +
-                [ inbound: connection.createChannel().with { it.queueDeclare(*queueDeclarationParams); it } ]
+                [
+                    name: "Consumer-${i}",
+                    inbound: connection.createChannel().with {
+                        it.queueDeclare(*queueDeclarationParams)
+                        it
+                    }
+                ]
             )
 
             new Thread(consumer).start()
         }
 
-        println("Starting...")
+        logger.info("Starting sample...")
         start.countDown()
         stop.await()
-        println("Finished!")
+        logger.info("Sample complete.")
 
         connection.close()
     }

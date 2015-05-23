@@ -7,15 +7,14 @@ import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException
 import java.util.concurrent.CountDownLatch
 import groovy.transform.CompileStatic
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import groovy.util.logging.Slf4j
 
 /**
  * Reads messages from the queue and logs them.
  */
+@Slf4j
 @CompileStatic
 class HelloConsumer implements Runnable {
-    private final Logger logger = LoggerFactory.getLogger(HelloConsumer.class)
 
     String name
     CountDownLatch startLatch
@@ -35,13 +34,13 @@ class HelloConsumer implements Runnable {
         String result = null
         try {
             QueueingConsumer.Delivery delivery = consumer.nextDelivery(timeout)
-            result = new String(delivery.getBody(), "UTF-8")
+            result = delivery ? new String(delivery.getBody(), "UTF-8") : null
         } catch (InterruptedException ex) {
-
+            log.error("Interrupted!", ex)
         } catch (ShutdownSignalException ex) {
-
+            log.error("Shutdown signal encountered!", ex)
         } catch (ConsumerCancelledException ex) {
-
+            log.error("Consumer cancelled!", ex)
         }
         return result
     }
@@ -49,6 +48,7 @@ class HelloConsumer implements Runnable {
     void run() {
         // Try or die
         try { startLatch.await() } catch (InterruptedException ex) { return }
+        log.info('[{}] Starting...', name)
 
         this.consumer = new QueueingConsumer(inbound)
         this.inbound.basicConsume(
@@ -61,9 +61,11 @@ class HelloConsumer implements Runnable {
         long stopTime = startTime + millisToRun
 
         while (System.currentTimeMillis() < stopTime) {
-            println("[${name}] Grabbed message: ${grabMessage()}")
+            String message = grabMessage()
+            log.trace('[{}] Grabbed message: {}', name, message)
         }
 
+        log.info('[{}] Stopping...', name)
         // Close the channel when we're finished with it
         this.inbound.close()
         stopLatch.countDown()
