@@ -1,0 +1,31 @@
+version = '1.0'
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile "org.codehaus.groovy:groovy-all:2.3.6"
+  compile "com.rabbitmq:amqp-client:3.4.1"
+}
+
+jar {
+  // Simple uberjar task
+  from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+    exclude "META-INF/*.SF"
+    exclude "META-INF/*.DSA"
+    exclude "META-INF/*.RSA"
+  }
+
+  manifest {
+    attributes  'Implementation-Title': 'EIP Samples',
+                'Implementation-Version': version, 
+                'Built-By': System.getProperty('user.name'),
+                'Built-Date': new Date(),
+                'Built-JDK': System.getProperty('java.version'),
+                'Main-Class': 'so.dahlgren.eip.Main'
+  }
+}
