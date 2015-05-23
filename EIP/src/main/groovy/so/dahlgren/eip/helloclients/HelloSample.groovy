@@ -8,40 +8,70 @@ import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
+import groovy.util.CliBuilder
+import groovy.util.logging.Slf4j
+import groovy.util.OptionAccessor
 import java.util.concurrent.CountDownLatch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import so.dahlgren.eip.Sample
 
+/**
+ * A basic sample to show publishing and retrieving messages with RabbitMQ.
+ *
+ * This sample creates a number of producers and a number of consumers, then sets
+ * them to producing and consuming on a specified queue. The sample will run for a
+ * specified number of milliseconds before exiting.
+ */
+@Slf4j
 @CompileStatic
-class HelloSample {
-    private static final Logger logger = LoggerFactory.getLogger(HelloSample.class)
+class HelloSample extends Sample {
+
+    // CliBuilder is not CompileStatic friendly
+    @CompileStatic(value=TypeCheckingMode.SKIP)
+    HelloSample() {
+        // Add additional specific options
+        cliOptions.usage = 'HelloSample [options]'
+        cliOptions.p(longOpt:'producers', args:1, argName:'number', 'Number of producers to spawn')
+        cliOptions.c(longOpt:'consumers', args:1, argName:'number', 'Number of consumers to spawn')
+        cliOptions.d(longOpt:'duration', args:1, argName:'milliseconds', 'Number of milliseconds to run')
+    }
+
 
     // Gimme the spread operator!
     @CompileStatic(value=TypeCheckingMode.SKIP)
-    static void runSample(ConnectionFactory factory, String queueName, long millisToRun) {
-        int producers = 3
-        int consumers = 2
+    void runSample(String[] args) {
+        OptionAccessor options = parseArgs(args)
 
-        logger.info('Sample will include {} producer threads and {} consumer threads', producers, consumers)
+        ConnectionFactory factory = getConnectionFactory(options)
+
+        int producers = (options.p ?: 4) as int
+        int consumers = (options.c ?: 3) as int
+
+        String queueName = options.'queue-name' ?: 'eip-one'
+
+        String hostname = options.H ?: 'localhost'
+        int port = (options.P ?: 5672) as int
+
+        String username = options.U ?: 'guest'
+        String password = options.password ?: 'guest'
+
+        long duration = (options.d ?: 10000l) as long
+
+        log.info(
+            'Running {} producers with {} consumers on queue \"{}\" for {} millis',
+            producers, consumers, queueName, duration
+        )
+
         CountDownLatch start = new CountDownLatch(1);
         CountDownLatch stop = new CountDownLatch(producers + consumers);
 
         Connection connection = factory.newConnection()
 
-        List queueDeclarationParams = [
-            queueName,
-            false, // durable
-            false, //exclusive
-            false, // autoDelete
-            null // Map<String,Object> args
-        ]
+        //                                     durable, exclusive, autoDelete, args
+        List queueDeclarationParams = [ queueName, false, false, false, null ]
 
-        Map sharedParams = [
-            queueName: queueName,
-            startLatch: start,
-            stopLatch: stop,
-            millisToRun: millisToRun
-        ]
+        Map sharedParams = [ queueName: queueName, startLatch: start, stopLatch: stop, millisToRun: duration ]
 
         for (int i = 0; i < producers; i++) {
             HelloProducer producer = new HelloProducer(sharedParams +
@@ -70,10 +100,10 @@ class HelloSample {
             new Thread(consumer).start()
         }
 
-        logger.info("Starting sample...")
+        log.info("Starting sample...")
         start.countDown()
         stop.await()
-        logger.info("Sample complete.")
+        log.info("Sample complete.")
 
         connection.close()
     }

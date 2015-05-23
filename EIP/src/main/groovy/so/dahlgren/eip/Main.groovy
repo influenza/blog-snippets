@@ -14,12 +14,8 @@ class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class)
 
     static void main(String[] args) {
-        logger.trace("Creating connection factory...")
-        ConnectionFactory cf = new ConnectionFactory().with {
-            it.setHost("localhost")
-            it
-        }
         logger.info("Starting HelloSample")
-        HelloSample.runSample(cf, "eip-one", 10000)
+        HelloSample sample = new HelloSample()
+        sample.runSample(args)
     }
 }
