@@ -8,5 +8,5 @@ For additional information, see [the blog](http://dahlgren.so/categories.html#ei
 
 To run:
 
-  `gradle build && java -jar build/libs/EIP-1.0.jar`
+  `gradle run`
 

@@ -2,6 +2,9 @@ version = '1.0'
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: 'application'
+
+mainClassName = 'so.dahlgren.eip.Main'
 
 repositories {
   mavenCentral()
@@ -28,6 +31,9 @@ jar {
                 'Built-By': System.getProperty('user.name'),
                 'Built-Date': new Date(),
                 'Built-JDK': System.getProperty('java.version'),
-                'Main-Class': 'so.dahlgren.eip.Main'
+                'Main-Class': mainClassName
   }
+}
+
+run {
 }
