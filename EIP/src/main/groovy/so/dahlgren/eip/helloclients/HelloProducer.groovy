@@ -33,9 +33,10 @@ class HelloProducer implements Runnable {
                 '', // Exchange (blank == default)
                 this.queueName, // Routing key - i.e., our queue name
                 null, // router headers, etc (com.rabbitmq.client.BasicProperties instance)
-                messageText.getBytes() // message body
+                messageText as byte[] // message body
             )
         } catch (IOException ex) {
+            log.error("IOException trying to publish message: ${ex}")
         }
     }
 
